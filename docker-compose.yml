@@ -1,0 +1,38 @@
+version: '2'
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - /d/webdev/hosts:/etc/nginx/conf.d
+            - /d/webdev/www:/var/www
+            - /d/webdev/logs:/var/log/nginx
+        links:
+            - php
+    php:
+        build: ./images/php
+        links:
+            - mysql:mysql
+            - postgres:pgsql
+        volumes:
+            - /d/webdev/www:/var/www
+    mysql:
+        image: mysql:8
+        ports:
+            - "3306:3306"
+        volumes:
+            - /d/webdev/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: keepitsimple
+    postgres:
+        image: postgres:9.6
+        ports:
+            - "5432:5432"
+        volumes:
+            - /d/webdev/postgresql:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: "root"
+            POSTGRES_PASSWORD: "keepitsimple"
+            PGDATA: /tmp
